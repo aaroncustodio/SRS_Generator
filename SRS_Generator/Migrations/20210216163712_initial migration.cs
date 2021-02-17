@@ -13,7 +13,7 @@ namespace SRS_Generator.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
-                    DateModified = table.Column<DateTime>(nullable: false),
+                    DateUpdated = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false)
                 },

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SRS_Generator.Data;
 
 namespace SRS_Generator.Migrations
 {
     [DbContext(typeof(GuildContext))]
-    partial class GuildContextModelSnapshot : ModelSnapshot
+    [Migration("20210217131356_add switch req")]
+    partial class addswitchreq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +25,7 @@ namespace SRS_Generator.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<DateTime>("DateUpdated");
+                    b.Property<DateTime>("DateModified");
 
                     b.Property<bool>("IsActive");
 
@@ -65,7 +67,7 @@ namespace SRS_Generator.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
-                    b.Property<DateTime>("DateUpdated");
+                    b.Property<DateTime>("DateModified");
 
                     b.Property<bool>("IsApproved");
 

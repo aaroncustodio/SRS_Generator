@@ -15,13 +15,14 @@ namespace SRS_Generator.Data
 
         public DbSet<Guild> Guilds { get; set; }
         public DbSet<GuildMember> GuildMembers { get; set; }
+        public DbSet<SwitchRequest> SwitchRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //One-to-many guild member relationship
             modelBuilder.Entity<Guild>()
                 .HasMany(g => g.Members)
                 .WithOne(m => m.Guild);
-
             modelBuilder.Entity<GuildMember>()
                 .HasKey(m => m.DiscordId);
         }
