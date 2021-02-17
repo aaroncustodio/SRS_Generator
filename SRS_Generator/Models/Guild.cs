@@ -10,5 +10,6 @@ namespace SRS_Generator.Models
         public string Name { get; set; }
         public ICollection<GuildMember> Members { get; set; }
         public bool IsActive { get; set; }
+        public bool IsFarmingGuild { get; set; }
     }
 }
