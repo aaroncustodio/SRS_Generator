@@ -4,6 +4,7 @@ using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using SRS_Generator.Commands;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SRS_Generator.Infrastructure
@@ -21,6 +22,7 @@ namespace SRS_Generator.Infrastructure
             IServiceProvider services,
             string token,
             string prefix
+            //List<string> prefixes
             //IOptionsSnapshot<ClientSettings> clientSettingsOptions,
             //IOptionsSnapshot<CommandSettings> commandSettingsOptions,
             )
@@ -30,20 +32,16 @@ namespace SRS_Generator.Infrastructure
                 Token = token,
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
-                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Debug
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Debug,
+                //Intents = DiscordIntents.GuildMembers
             };
 
             Client = new DiscordClient(config);
             Client.Ready += OnClientReady;
 
-            var commandPrefixes = new string[]
-            {
-                prefix
-            };
-
             var commandsConfig = new CommandsNextConfiguration
             {
-                StringPrefixes = commandPrefixes,
+                StringPrefixes = new string[] { prefix },
                 EnableMentionPrefix = true,
                 DmHelp = true,
                 Services = services
