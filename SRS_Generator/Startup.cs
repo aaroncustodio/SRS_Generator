@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SRS_Generator.Config;
 using SRS_Generator.Data;
 using SRS_Generator.Infrastructure;
+using SRS_Generator.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace SRS_Generator
         {
             services.AddCustomServices(Configuration);
             services.AddCustomDbContext(Configuration);
+            services.AddIntegrationServices(Configuration);
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -34,7 +36,6 @@ namespace SRS_Generator
             var commandSettings = new CommandSettings();
             Configuration.GetSection("ClientSettings").Bind(clientSettings);
             Configuration.GetSection("CommandSettings").Bind(commandSettings);
-            var connectionString = Configuration["ConnectionString"];
 
             var bot = new Bot(serviceProvider, clientSettings.Token, commandSettings.Prefix);
             services.AddSingleton(bot);
@@ -63,6 +64,13 @@ namespace SRS_Generator
                 var connectionString = configuration["ConnectionString"];
                 options.UseSqlite(connectionString);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddTransient<IGuildService, GuildService>();
 
             return services;
         }
