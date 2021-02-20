@@ -43,7 +43,7 @@ namespace SRS_Generator.Infrastructure
 
             Commands = Client.UseCommandsNext(commandsConfig);
 
-            Commands.RegisterCommands<FunCommands>();
+            Commands.RegisterCommands<TestCommand>();
             Commands.RegisterCommands<GuildMemberCommands>();
             Commands.RegisterCommands<GuildCommands>();
 

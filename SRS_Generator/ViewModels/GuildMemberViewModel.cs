@@ -12,6 +12,10 @@ namespace SRS_Generator.ViewModels
         public string Discriminator { get; set; }
         public GuildViewModel Guild { get; set; }
         public bool IsGuildMaster { get; set; }
+        public string FullUsername()
+        {
+            return $"{Username}#{Discriminator}";
+        }
         //public Guild Guild { get; set; }
         //public bool IsGuildMaster { get; set; }
     }

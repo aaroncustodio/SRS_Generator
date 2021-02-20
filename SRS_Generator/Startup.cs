@@ -73,6 +73,7 @@ namespace SRS_Generator
         {
             services.AddTransient<IGuildService, GuildService>();
             services.AddTransient<IGuildMemberService, GuildMemberService>();
+            services.AddTransient<IEmbedContentBuilder, EmbedContentBuilder>();
 
             return services;
         }
