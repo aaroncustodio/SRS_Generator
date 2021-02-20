@@ -13,5 +13,11 @@ namespace SRS_Generator.ViewModels
         public bool IsFarmingGuild { get; set; }
         public int MemberCount { get; set; }
         public int OpenSpots { get; set; }
+
+        public string Status()
+        {
+            string status = IsActive ? "Active" : "Inactive";
+            return status;
+        }
     }
 }

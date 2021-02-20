@@ -25,6 +25,8 @@ namespace SRS_Generator.Helpers
             {
                 Name = source.Name,
                 Members = source.Members.Select(x => x.MapFromEntity()).ToList(),
+                IsActive = source.IsActive,
+                IsFarmingGuild = source.IsFarmingGuild,
                 MemberCount = members.Count(),
                 OpenSpots = _guildCapacity - members.Count()
             };

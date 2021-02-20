@@ -11,9 +11,6 @@ namespace SRS_Generator.Infrastructure
 {
     public class Bot
     {
-        //private readonly ClientSettings _clientSettings;
-        //private readonly CommandSettings _commandSettings;
-
         public DiscordClient Client { get; private set; }
         public InteractivityExtension Interactivity { get; private set; }
         public CommandsNextExtension Commands { get; private set; }
@@ -21,10 +18,7 @@ namespace SRS_Generator.Infrastructure
         public Bot(
             IServiceProvider services,
             string token,
-            string prefix
-            //List<string> prefixes
-            //IOptionsSnapshot<ClientSettings> clientSettingsOptions,
-            //IOptionsSnapshot<CommandSettings> commandSettingsOptions,
+            List<string> prefixes
             )
         {
             var config = new DiscordConfiguration
@@ -41,7 +35,7 @@ namespace SRS_Generator.Infrastructure
 
             var commandsConfig = new CommandsNextConfiguration
             {
-                StringPrefixes = new string[] { prefix },
+                StringPrefixes = prefixes,
                 EnableMentionPrefix = true,
                 DmHelp = true,
                 Services = services
@@ -50,6 +44,8 @@ namespace SRS_Generator.Infrastructure
             Commands = Client.UseCommandsNext(commandsConfig);
 
             Commands.RegisterCommands<FunCommands>();
+            Commands.RegisterCommands<GuildMemberCommands>();
+            Commands.RegisterCommands<GuildCommands>();
 
             Client.ConnectAsync();
         }

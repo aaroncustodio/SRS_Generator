@@ -37,7 +37,7 @@ namespace SRS_Generator
             Configuration.GetSection("ClientSettings").Bind(clientSettings);
             Configuration.GetSection("CommandSettings").Bind(commandSettings);
 
-            var bot = new Bot(serviceProvider, clientSettings.Token, commandSettings.Prefix);
+            var bot = new Bot(serviceProvider, clientSettings.Token, commandSettings.Prefixes);
             services.AddSingleton(bot);
         }
 
@@ -63,6 +63,7 @@ namespace SRS_Generator
             {
                 var connectionString = configuration["ConnectionString"];
                 options.UseSqlite(connectionString);
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             return services;
@@ -71,6 +72,7 @@ namespace SRS_Generator
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IGuildService, GuildService>();
+            services.AddTransient<IGuildMemberService, GuildMemberService>();
 
             return services;
         }
