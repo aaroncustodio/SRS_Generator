@@ -54,6 +54,36 @@ namespace SRS_Generator.Services
             string result = "";
             return result;
         }
+
+        public async Task AddMembersToGuild(string guildName, List<string> userIds)
+        {
+            var guild = await _context.Guilds
+                .Include(x => x.Members)
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == guildName.ToLower()).ConfigureAwait(false);
+
+            if (guild == null)
+            {
+                throw new Exception("Guild does not exist.");
+            }
+
+            var userList = await _context.GuildMembers
+                .Where(x => userIds.Any(id => id == x.DiscordId)).ToListAsync().ConfigureAwait(false);
+
+            foreach (var user in userList)
+            {
+                var contains = guild.Members.Any(x => x.DiscordId == user.DiscordId);
+
+                if (!contains)
+                {
+                    guild.Members.Add(user);
+                }
+            }
+
+            _context.Guilds.Update(guild);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
+
+            return;
+        }
     }
 
     public interface IGuildService
@@ -61,5 +91,6 @@ namespace SRS_Generator.Services
         Task CreateGuild(GuildViewModel guild);
         Task<GuildViewModel> GetGuild(string name);
         Task<string> GetGuildInfo(string name);
+        Task AddMembersToGuild(string guildName, List<string> userIds);
     }
 }

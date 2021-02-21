@@ -14,6 +14,11 @@ namespace SRS_Generator.Services
             string list = "";
             int ctr = 1;
 
+            if (members.Count == 0)
+            {
+                return "\n\nNothing to display.";
+            }
+
             foreach (var member in members)
             {
                 list += $"\n#{ctr.ToString().ToBold()} - {member.FullUsername()}";

@@ -16,7 +16,5 @@ namespace SRS_Generator.ViewModels
         {
             return $"{Username}#{Discriminator}";
         }
-        //public Guild Guild { get; set; }
-        //public bool IsGuildMaster { get; set; }
     }
 }

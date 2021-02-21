@@ -29,8 +29,7 @@ namespace SRS_Generator.Services
 
             var memberId = user.Id.ToString();
             var member = await _context.GuildMembers.FirstOrDefaultAsync(x => x.DiscordId == memberId).ConfigureAwait(false);
-            //var query = _context.GuildMembers.AsQueryable();
-            //var memberList = query.Where().ToListAsync();
+
             if (member != null)
             {
                 throw new Exception("Member already exists!");
@@ -60,8 +59,7 @@ namespace SRS_Generator.Services
 
             var memberId = user.Id.ToString();
             var member = await _context.GuildMembers.FirstOrDefaultAsync(x => x.DiscordId == memberId).ConfigureAwait(false);
-            //var query = _context.GuildMembers.AsQueryable();
-            //var memberList = query.Where().ToListAsync();
+
             if (member == null)
             {
                 throw new Exception("Member does not exist!");

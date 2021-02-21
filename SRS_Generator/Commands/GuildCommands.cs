@@ -13,11 +13,14 @@ namespace SRS_Generator.Commands
     public class GuildCommands : BaseCommandModule
     {
         private readonly IGuildService _guildService;
+        private readonly IEmbedContentBuilder _embedContentBuilder;
 
         public GuildCommands(
-            IGuildService guildService)
+            IGuildService guildService,
+            IEmbedContentBuilder embedContentBuilder)
         {
             _guildService = guildService;
+            _embedContentBuilder = embedContentBuilder;
         }
 
         [Command("add-guild")]
@@ -59,17 +62,44 @@ namespace SRS_Generator.Commands
             try
             {
                 var guild = await _guildService.GetGuild(guildName);
+                var memberList = _embedContentBuilder.DescriptionListBuilder(guild.Members);
 
                 var embed = new DiscordEmbedBuilder();
                 embed.Title = "Guild Information";
                 embed.AddField("Name", guild.Name, true);
                 embed.AddField("Status", guild.Status(), true);
-                embed.AddField("Member count", guild.MemberCount.ToString());
-                embed.AddField("Open spots", guild.OpenSpots.ToString());
-                
+                embed.AddField("Member count", guild.MemberCount.ToString(), true);
+                embed.AddField("Open spots", guild.OpenSpots.ToString(), true);
+                embed.AddField("Members", memberList);
+
                 embed.Build();
 
                 await ctx.Channel.SendMessageAsync(embed).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(ex.Message).ConfigureAwait(false);
+            }
+        }
+
+        [Command("add-guild-members")]
+        [Description("")]
+        //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
+        public async Task ViewGuildInfo(CommandContext ctx, string guildName, [RemainingText] string users)
+        {
+            try
+            {
+                //var guild = await _guildService.GetGuild(guildName).ConfigureAwait(false);
+                var mentionedUsers = ctx.Message.MentionedUsers;
+                var userIds = mentionedUsers.Select(x => x.Id.ToString()).ToList();
+
+                await _guildService.AddMembersToGuild(guildName, userIds);
+
+                //TODO: should only mention the members that were actually added
+                var usersAdded = string.Join(", ", mentionedUsers);
+
+                string response = $"Added {usersAdded} to {guildName.ToUpper()}";
+                await ctx.Channel.SendMessageAsync(response).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

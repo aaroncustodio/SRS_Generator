@@ -1,7 +1,5 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using SRS_Generator.Services;
-using SRS_Generator.ViewModels;
 using System.Threading.Tasks;
 
 namespace SRS_Generator.Commands
