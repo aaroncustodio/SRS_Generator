@@ -32,7 +32,7 @@ namespace SRS_Generator.Services
 
             if (member != null)
             {
-                throw new Exception("Member already exists!");
+                throw new Exception("Member already exists.");
             }
 
             var newMember = new GuildMemberViewModel
@@ -62,7 +62,7 @@ namespace SRS_Generator.Services
 
             if (member == null)
             {
-                throw new Exception("Member does not exist!");
+                throw new Exception("Member does not exist.");
             }
 
             _context.GuildMembers.Remove(member);

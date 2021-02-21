@@ -47,6 +47,23 @@ namespace SRS_Generator.Services
             return guild;
         }
 
+        public async Task<List<GuildViewModel>> GetAllGuilds()
+        {
+            var guilds = await _context.Guilds
+                .Include(x => x.Members)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            if (guilds.Count == 0)
+            {
+                throw new Exception("No guilds to display.");
+            }
+
+            var guildList = guilds.Select(x => x.MapFromEntity()).ToList();
+
+            return guildList;
+        }
+
         public async Task<string> GetGuildInfo(string name)
         {
             var guild = await GetGuild(name);
@@ -59,7 +76,8 @@ namespace SRS_Generator.Services
         {
             var guild = await _context.Guilds
                 .Include(x => x.Members)
-                .FirstOrDefaultAsync(x => x.Name.ToLower() == guildName.ToLower()).ConfigureAwait(false);
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == guildName.ToLower())
+                .ConfigureAwait(false);
 
             if (guild == null)
             {
@@ -67,7 +85,9 @@ namespace SRS_Generator.Services
             }
 
             var userList = await _context.GuildMembers
-                .Where(x => userIds.Any(id => id == x.DiscordId)).ToListAsync().ConfigureAwait(false);
+                .Where(x => userIds.Any(id => id == x.DiscordId))
+                .ToListAsync()
+                .ConfigureAwait(false);
 
             foreach (var user in userList)
             {
@@ -89,6 +109,7 @@ namespace SRS_Generator.Services
     public interface IGuildService
     {
         Task CreateGuild(GuildViewModel guild);
+        Task<List<GuildViewModel>> GetAllGuilds();
         Task<GuildViewModel> GetGuild(string name);
         Task<string> GetGuildInfo(string name);
         Task AddMembersToGuild(string guildName, List<string> userIds);

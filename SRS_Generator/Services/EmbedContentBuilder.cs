@@ -9,7 +9,26 @@ namespace SRS_Generator.Services
 {
     public class EmbedContentBuilder : IEmbedContentBuilder
     {
-        public string DescriptionListBuilder(ICollection<GuildMemberViewModel> members)
+        public string BuildGuildList(ICollection<GuildViewModel> guilds)
+        {
+            string list = "";
+            int ctr = 1;
+
+            if (guilds.Count == 0)
+            {
+                return "\n\nNothing to display.";
+            }
+
+            foreach (var guild in guilds)
+            {
+                list += $"\n{ctr.ToString()}. {guild.Name.ToBold()} - {guild.MemberCount}/20 ({guild.OpenSpots} open spots)";
+                ctr++;
+            }
+
+            return $"\n{list}";
+        }
+
+        public string BuildMemberList(ICollection<GuildMemberViewModel> members)
         {
             string list = "";
             int ctr = 1;
@@ -31,6 +50,7 @@ namespace SRS_Generator.Services
 
     public interface IEmbedContentBuilder
     {
-        string DescriptionListBuilder(ICollection<GuildMemberViewModel> members);
+        string BuildGuildList(ICollection<GuildViewModel> guilds);
+        string BuildMemberList(ICollection<GuildMemberViewModel> members);
     }
 }

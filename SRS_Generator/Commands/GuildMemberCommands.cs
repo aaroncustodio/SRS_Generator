@@ -93,7 +93,7 @@ namespace SRS_Generator.Commands
             try
             {
                 var members = await _guildMemberService.GetAllUsers().ConfigureAwait(false);
-                var memberListString = _embedContentBuilder.DescriptionListBuilder(members);
+                var memberListString = _embedContentBuilder.BuildMemberList(members);
 
                 var embed = new DiscordEmbedBuilder();
                 embed.Title = "Member List";

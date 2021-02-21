@@ -61,7 +61,23 @@ namespace SRS_Generator.Commands
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task ListGuilds(CommandContext ctx)
         {
+            try
+            {
+                var guildList = await _guildService.GetAllGuilds().ConfigureAwait(false);
+                var guildListString = _embedContentBuilder.BuildGuildList(guildList);
 
+                var embed = new DiscordEmbedBuilder();
+                embed.Title = "Guild List";
+                embed.Description = guildListString;
+
+                embed.Build();
+
+                await ctx.Channel.SendMessageAsync(embed).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(ex.Message).ConfigureAwait(false);
+            }
         }
 
         [Command(_ViewGuildInfo)]
@@ -73,7 +89,7 @@ namespace SRS_Generator.Commands
             try
             {
                 var guild = await _guildService.GetGuild(guildName);
-                var memberList = _embedContentBuilder.DescriptionListBuilder(guild.Members);
+                var memberList = _embedContentBuilder.BuildMemberList(guild.Members);
 
                 var embed = new DiscordEmbedBuilder();
                 embed.Title = "Guild Information";
