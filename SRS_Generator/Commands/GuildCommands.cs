@@ -4,7 +4,6 @@ using DSharpPlus.Entities;
 using SRS_Generator.Services;
 using SRS_Generator.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +14,15 @@ namespace SRS_Generator.Commands
         private readonly IGuildService _guildService;
         private readonly IEmbedContentBuilder _embedContentBuilder;
 
+        private const string _AddGuildMembers = "add-guild-members";
+        private const string _AddGuildMembersAlias = "agm" ;
+        private const string _CreateGuild = "create-guild";
+        private const string _CreateGuildAlias = "cg";
+        private const string _ListGuilds = "list-guilds";
+        private const string _ListGuildsAlias = "lg";
+        private const string _ViewGuildInfo = "view-guild-info";
+        private const string _ViewGuildInfoAlias = "vgi";
+
         public GuildCommands(
             IGuildService guildService,
             IEmbedContentBuilder embedContentBuilder)
@@ -23,7 +31,8 @@ namespace SRS_Generator.Commands
             _embedContentBuilder = embedContentBuilder;
         }
 
-        [Command("add-guild")]
+        [Command(_CreateGuild)]
+        [Aliases(new string[] { _CreateGuildAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task CreateGuild(CommandContext ctx, string name, bool isActive, bool isFarming)
@@ -46,7 +55,8 @@ namespace SRS_Generator.Commands
             }
         }
 
-        [Command("list-guilds")]
+        [Command(_ListGuilds)]
+        [Aliases(new string[] { _ListGuildsAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task ListGuilds(CommandContext ctx)
@@ -54,7 +64,8 @@ namespace SRS_Generator.Commands
 
         }
 
-        [Command("guild-info")]
+        [Command(_ViewGuildInfo)]
+        [Aliases(new string[] { _ViewGuildInfoAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task ViewGuildInfo(CommandContext ctx, string guildName)
@@ -82,7 +93,8 @@ namespace SRS_Generator.Commands
             }
         }
 
-        [Command("add-guild-members")]
+        [Command(_AddGuildMembers)]
+        [Aliases(new string[] { _AddGuildMembersAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task ViewGuildInfo(CommandContext ctx, string guildName, [RemainingText] string users)

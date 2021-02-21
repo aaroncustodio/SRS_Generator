@@ -85,7 +85,7 @@ namespace SRS_Generator.Commands
             }
         }
 
-        [Command("view-all-members")]
+        [Command("list-members")]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task ViewAllMembers(CommandContext ctx)
