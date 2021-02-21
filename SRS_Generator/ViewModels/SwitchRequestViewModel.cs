@@ -8,8 +8,8 @@ namespace SRS_Generator.ViewModels
     public class SwitchRequestViewModel
     {
         public GuildMemberViewModel RequestedBy { get; set; }
-        public GuildViewModel SourceGuildId { get; set; }
-        public GuildViewModel TargetGuildId { get; set; }
+        public GuildViewModel SourceGuild { get; set; }
+        public GuildViewModel TargetGuild { get; set; }
         public bool IsApproved { get; set; }
         public string ApprovedBy { get; set; }
     }

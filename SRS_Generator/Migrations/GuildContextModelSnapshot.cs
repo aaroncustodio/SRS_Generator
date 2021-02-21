@@ -71,17 +71,17 @@ namespace SRS_Generator.Migrations
 
                     b.Property<string>("RequestedByDiscordId");
 
-                    b.Property<Guid?>("SourceGuildIdId");
+                    b.Property<Guid?>("SourceGuildId");
 
-                    b.Property<Guid?>("TargetGuildIdId");
+                    b.Property<Guid?>("TargetGuildId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RequestedByDiscordId");
 
-                    b.HasIndex("SourceGuildIdId");
+                    b.HasIndex("SourceGuildId");
 
-                    b.HasIndex("TargetGuildIdId");
+                    b.HasIndex("TargetGuildId");
 
                     b.ToTable("SwitchRequests");
                 });
@@ -99,13 +99,13 @@ namespace SRS_Generator.Migrations
                         .WithMany("SwitchRequests")
                         .HasForeignKey("RequestedByDiscordId");
 
-                    b.HasOne("SRS_Generator.Models.Guild", "SourceGuildId")
+                    b.HasOne("SRS_Generator.Models.Guild", "SourceGuild")
                         .WithMany()
-                        .HasForeignKey("SourceGuildIdId");
+                        .HasForeignKey("SourceGuildId");
 
-                    b.HasOne("SRS_Generator.Models.Guild", "TargetGuildId")
+                    b.HasOne("SRS_Generator.Models.Guild", "TargetGuild")
                         .WithMany()
-                        .HasForeignKey("TargetGuildIdId");
+                        .HasForeignKey("TargetGuildId");
                 });
 #pragma warning restore 612, 618
         }

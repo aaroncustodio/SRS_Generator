@@ -26,8 +26,8 @@ namespace SRS_Generator.Migrations
                     DateCreated = table.Column<DateTime>(nullable: false),
                     DateUpdated = table.Column<DateTime>(nullable: false),
                     RequestedByDiscordId = table.Column<string>(nullable: true),
-                    SourceGuildIdId = table.Column<Guid>(nullable: true),
-                    TargetGuildIdId = table.Column<Guid>(nullable: true),
+                    SourceGuildId = table.Column<Guid>(nullable: true),
+                    TargetGuildId = table.Column<Guid>(nullable: true),
                     IsApproved = table.Column<bool>(nullable: false),
                     ApprovedBy = table.Column<string>(nullable: true)
                 },
@@ -41,14 +41,14 @@ namespace SRS_Generator.Migrations
                         principalColumn: "DiscordId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SwitchRequests_Guilds_SourceGuildIdId",
-                        column: x => x.SourceGuildIdId,
+                        name: "FK_SwitchRequests_Guilds_SourceGuildId",
+                        column: x => x.SourceGuildId,
                         principalTable: "Guilds",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SwitchRequests_Guilds_TargetGuildIdId",
-                        column: x => x.TargetGuildIdId,
+                        name: "FK_SwitchRequests_Guilds_TargetGuildId",
+                        column: x => x.TargetGuildId,
                         principalTable: "Guilds",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -60,14 +60,14 @@ namespace SRS_Generator.Migrations
                 column: "RequestedByDiscordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SwitchRequests_SourceGuildIdId",
+                name: "IX_SwitchRequests_SourceGuildId",
                 table: "SwitchRequests",
-                column: "SourceGuildIdId");
+                column: "SourceGuildId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SwitchRequests_TargetGuildIdId",
+                name: "IX_SwitchRequests_TargetGuildId",
                 table: "SwitchRequests",
-                column: "TargetGuildIdId");
+                column: "TargetGuildId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
