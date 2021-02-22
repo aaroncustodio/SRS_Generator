@@ -28,7 +28,9 @@ namespace SRS_Generator.Services
             }
 
             var memberId = user.Id.ToString();
-            var member = await _context.GuildMembers.FirstOrDefaultAsync(x => x.DiscordId == memberId).ConfigureAwait(false);
+            var member = await _context.GuildMembers
+				.FirstOrDefaultAsync(x => x.DiscordId == memberId)
+				.ConfigureAwait(false);
 
             if (member != null)
             {
@@ -58,7 +60,9 @@ namespace SRS_Generator.Services
             }
 
             var memberId = user.Id.ToString();
-            var member = await _context.GuildMembers.FirstOrDefaultAsync(x => x.DiscordId == memberId).ConfigureAwait(false);
+            var member = await _context.GuildMembers
+				.FirstOrDefaultAsync(x => x.DiscordId == memberId)
+				.ConfigureAwait(false);
 
             if (member == null)
             {
@@ -73,7 +77,10 @@ namespace SRS_Generator.Services
 
         public async Task<List<GuildMemberViewModel>> GetAllUsers()
         {
-            var guildMembers = await _context.GuildMembers.ToListAsync().ConfigureAwait(false);
+            var guildMembers = await _context.GuildMembers
+                .Include(x => x.Guild)
+                .ToListAsync()
+                .ConfigureAwait(false);
             var guildMemberList = guildMembers.Select(x => x.MapFromEntity()).ToList();
 
             return guildMemberList;
@@ -83,7 +90,9 @@ namespace SRS_Generator.Services
         {
             var userIds = users.Select(x => x.Id.ToString()).ToList();
             var existingUsers = await _context.GuildMembers
-                .Where(x => userIds.Any(id => id == x.DiscordId)).ToListAsync().ConfigureAwait(false);
+                .Where(x => userIds.Any(id => id == x.DiscordId))
+				.ToListAsync()
+				.ConfigureAwait(false);
 
             var newUserList = users.Where(x => existingUsers.All(existing => existing.DiscordId != x.Id.ToString())).ToList();
 
