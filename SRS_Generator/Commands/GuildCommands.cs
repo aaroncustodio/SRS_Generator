@@ -113,7 +113,7 @@ namespace SRS_Generator.Commands
         [Aliases(new string[] { _AddGuildMembersAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
-        public async Task ViewGuildInfo(CommandContext ctx, string guildName, [RemainingText] string users)
+        public async Task AddGuildMembers(CommandContext ctx, string guildName, [RemainingText] string users)
         {
             try
             {
