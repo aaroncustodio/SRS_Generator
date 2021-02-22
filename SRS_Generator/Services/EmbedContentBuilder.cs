@@ -38,9 +38,42 @@ namespace SRS_Generator.Services
                 return "\n\nNothing to display.";
             }
 
-            foreach (var member in members)
+            var membersWithGuild = members
+                .Where(x => x.Guild != null)
+                .ToList();
+            var membersWithoutGuild = members
+                .Where(x => x.Guild == null)
+                .ToList();
+
+            if (membersWithGuild.Count > 0)
             {
-                list += $"\n#{ctr.ToString().ToBold()} - {member.FullUsername()}";
+                membersWithGuild = membersWithGuild
+                    .OrderBy(x => x.Guild.Name)
+                    .ThenBy(x => x.Username)
+                    .ToList();
+            }
+            if (membersWithoutGuild.Count > 0)
+            {
+                membersWithoutGuild = membersWithoutGuild
+                    .OrderBy(x => x.Username)
+                    .ToList();
+            }
+
+            var memberList = new List<GuildMemberViewModel>();
+            memberList.AddRange(membersWithGuild);
+            memberList.AddRange(membersWithoutGuild);
+
+            foreach (var member in memberList)
+            {
+                if (member.Guild != null)
+                {
+                    list += $"\n#{ctr.ToString().ToBold()} - ({member.Guild.Name.ToBold()}) {member.FullUsername()}";
+                }
+                else
+                {
+                    list += $"\n#{ctr.ToString().ToBold()} - {member.FullUsername()}";
+                }
+
                 ctr++;
             }
 
