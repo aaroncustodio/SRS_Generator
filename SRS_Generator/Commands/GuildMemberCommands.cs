@@ -14,6 +14,15 @@ namespace SRS_Generator.Commands
         private readonly IGuildMemberService _guildMemberService;
         private readonly IEmbedContentBuilder _embedContentBuilder;
 
+        private const string _AddAllMembers = "add-all-members";
+        private const string _AddAllMembersAlias = "aam";
+        private const string _CreateGuildMember = "create-member";
+        private const string _CreateGuildMemberAlias = "cm";
+        private const string _DeleteGuildMember = "delete-member";
+        private const string _DeleteGuildMemberAlias = "dm";
+        private const string _ViewAllMembers = "list-members";
+        private const string _ViewAllMembersAlias = "lm";
+
         public GuildMemberCommands(
             IGuildMemberService guildMemberService,
             IEmbedContentBuilder embedContentBuilder)
@@ -22,7 +31,8 @@ namespace SRS_Generator.Commands
             _embedContentBuilder = embedContentBuilder;
         }
 
-        [Command("create-member")]
+        [Command(_CreateGuildMember)]
+        [Aliases(new string[] { _CreateGuildMemberAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task CreateGuildMember(CommandContext ctx, string mention)
@@ -43,7 +53,8 @@ namespace SRS_Generator.Commands
             }
         }
 
-        [Command("delete-member")]
+        [Command(_DeleteGuildMember)]
+        [Aliases(new string[] { _DeleteGuildMemberAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task DeleteGuildMember(CommandContext ctx, string mention)
@@ -64,7 +75,8 @@ namespace SRS_Generator.Commands
             }
         }
 
-        [Command("add-all-members")]
+        [Command(_AddAllMembers)]
+        [Aliases(new string[] { _AddAllMembersAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task AddAllMembers(CommandContext ctx)
@@ -85,7 +97,8 @@ namespace SRS_Generator.Commands
             }
         }
 
-        [Command("list-members")]
+        [Command(_ViewAllMembers)]
+        [Aliases(new string[] { _ViewAllMembersAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
         public async Task ViewAllMembers(CommandContext ctx)
