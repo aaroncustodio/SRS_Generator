@@ -12,24 +12,30 @@ namespace SRS_Generator.Helpers
         private static int _guildCapacity = 20;
 
         #region MapFromEntity
-        public static GuildViewModel MapFromEntity(this Guild source)
+        public static GuildViewModel MapFromEntity(this Guild source, bool includeMembers = true)
         {
             if (source == null)
             {
                 return null;
             }
 
-            var members = source.Members;
-
-            return new GuildViewModel
+            var result = new GuildViewModel
             {
                 Name = source.Name,
-                Members = source.Members.Select(x => x.MapFromEntity()).ToList(),
                 IsActive = source.IsActive,
                 IsFarmingGuild = source.IsFarmingGuild,
-                MemberCount = members.Count(),
-                OpenSpots = _guildCapacity - members.Count()
             };
+
+            if (includeMembers)
+            {
+                var members = source.Members;
+
+                result.Members = source.Members.Select(x => x.MapFromEntity()).ToList();
+                result.MemberCount = members.Count();
+                result.OpenSpots = _guildCapacity - members.Count();
+            }
+
+            return result;
         }
 
         public static GuildMemberViewModel MapFromEntity(this GuildMember source)
@@ -43,6 +49,7 @@ namespace SRS_Generator.Helpers
             {
                 DiscordId = source.DiscordId,
                 Discriminator = source.Discriminator,
+                Guild = source.Guild.MapFromEntity(false),
                 Username = source.Username
             };
         }
