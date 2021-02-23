@@ -20,6 +20,8 @@ namespace SRS_Generator.Commands
         private const string _CreateGuildAlias = "cg";
         private const string _ListGuilds = "list-guilds";
         private const string _ListGuildsAlias = "lg";
+        private const string _RemoveGuildMembers = "remove-guild-memebrs";
+        private const string _RemoveGuildMembersAlias = "rgm";
         private const string _ViewGuildInfo = "view-guild-info";
         private const string _ViewGuildInfoAlias = "vgi";
 
@@ -121,12 +123,38 @@ namespace SRS_Generator.Commands
                 var mentionedUsers = ctx.Message.MentionedUsers;
                 var userIds = mentionedUsers.Select(x => x.Id.ToString()).ToList();
 
-                await _guildService.AddMembersToGuild(guildName, userIds);
+                var addedUsersList = await _guildService.AddMembersToGuild(guildName, userIds);
 
                 //TODO: should only mention the members that were actually added
-                var usersAdded = string.Join(", ", mentionedUsers);
+                var addedUsers = string.Join(", ", addedUsersList);
 
-                string response = $"Added {usersAdded} to {guildName.ToUpper()}";
+                string response = $"Added {addedUsers} to {guildName.ToUpper()}";
+                await ctx.Channel.SendMessageAsync(response).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(ex.Message).ConfigureAwait(false);
+            }
+        }
+
+        [Command(_RemoveGuildMembers)]
+        [Aliases(new string[] { _RemoveGuildMembersAlias })]
+        [Description("")]
+        //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
+        public async Task RemoveGuildMembers(CommandContext ctx, string guildName, [RemainingText] string users)
+        {
+            try
+            {
+                //var guild = await _guildService.GetGuild(guildName).ConfigureAwait(false);
+                var mentionedUsers = ctx.Message.MentionedUsers;
+                var userIds = mentionedUsers.Select(x => x.Id.ToString()).ToList();
+
+                var removedUsersList = await _guildService.RemoveMembersFromGuild(guildName, userIds);
+
+                //TODO: should only mention the members that were actually added
+                var removedUsers = string.Join(", ", removedUsersList);
+
+                string response = $"Removed {removedUsers} from {guildName.ToUpper()}";
                 await ctx.Channel.SendMessageAsync(response).ConfigureAwait(false);
             }
             catch (Exception ex)

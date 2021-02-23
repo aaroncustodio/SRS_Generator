@@ -72,7 +72,7 @@ namespace SRS_Generator.Services
             return result;
         }
 
-        public async Task AddMembersToGuild(string guildName, List<string> userIds)
+        public async Task<List<string>> AddMembersToGuild(string guildName, List<string> userIds)
         {
             var guild = await _context.Guilds
                 .Include(x => x.Members)
@@ -89,6 +89,8 @@ namespace SRS_Generator.Services
                 .ToListAsync()
                 .ConfigureAwait(false);
 
+            var addedUsers = new List<string>();
+
             foreach (var user in userList)
             {
                 var contains = guild.Members.Any(x => x.DiscordId == user.DiscordId);
@@ -96,13 +98,58 @@ namespace SRS_Generator.Services
                 if (!contains)
                 {
                     guild.Members.Add(user);
+                    addedUsers.Add($"{user.Username}**#**{user.Discriminator}");
                 }
             }
 
             _context.Guilds.Update(guild);
             await _context.SaveChangesAsync().ConfigureAwait(false);
 
-            return;
+            return addedUsers;
+        }
+
+        public async Task<List<string>> RemoveMembersFromGuild(string guildName, List<string> userIds)
+        {
+            bool guildExists = await _context.Guilds
+                .AnyAsync(x => x.Name.ToLower() == guildName.ToLower())
+                .ConfigureAwait(false);
+
+            if (!guildExists)
+            {
+                throw new Exception("Guild does not exist.");
+            }
+
+            var guild = await _context.Guilds
+                .Include(x => x.Members)
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == guildName.ToLower())
+                .ConfigureAwait(false);
+
+            var userList = guild.Members
+                .Where(x => userIds.Any(id => id == x.DiscordId))
+                .ToList();
+
+            if (userList.Count == 0)
+            {
+                throw new Exception("No such member(s) found for this guild.");
+            }
+
+            var removedUsers = new List<string>();
+
+            foreach (var user in userList)
+            {
+                var contains = guild.Members.Any(x => x.DiscordId == user.DiscordId);
+
+                if (contains)
+                {
+                    guild.Members.Remove(user);
+                    removedUsers.Add($"{user.Username}**#**{user.Discriminator}");
+                }
+            }
+
+            _context.Guilds.Update(guild);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
+
+            return removedUsers;
         }
     }
 
@@ -112,6 +159,7 @@ namespace SRS_Generator.Services
         Task<List<GuildViewModel>> GetAllGuilds();
         Task<GuildViewModel> GetGuild(string name);
         Task<string> GetGuildInfo(string name);
-        Task AddMembersToGuild(string guildName, List<string> userIds);
+        Task<List<string>> AddMembersToGuild(string guildName, List<string> userIds);
+        Task<List<string>> RemoveMembersFromGuild(string guildName, List<string> userIds);
     }
 }
