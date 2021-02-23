@@ -63,7 +63,6 @@ namespace SRS_Generator
             {
                 var connectionString = configuration["ConnectionString"];
                 options.UseSqlite(connectionString);
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             return services;
