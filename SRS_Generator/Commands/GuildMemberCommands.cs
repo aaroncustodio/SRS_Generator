@@ -109,7 +109,7 @@ namespace SRS_Generator.Commands
                 var memberListString = _embedContentBuilder.BuildMemberList(members);
 
                 var embed = new DiscordEmbedBuilder();
-                embed.Title = "Member List";
+                embed.Title = "Members";
                 embed.Description = memberListString;
                 embed.Build();
 

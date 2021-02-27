@@ -69,7 +69,7 @@ namespace SRS_Generator.Commands
                 var guildListString = _embedContentBuilder.BuildGuildList(guildList);
 
                 var embed = new DiscordEmbedBuilder();
-                embed.Title = "Guild List";
+                embed.Title = "Guilds";
                 embed.Description = guildListString;
 
                 embed.Build();
