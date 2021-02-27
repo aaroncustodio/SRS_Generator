@@ -46,6 +46,7 @@ namespace SRS_Generator.Infrastructure
             Commands.RegisterCommands<TestCommand>();
             Commands.RegisterCommands<GuildMemberCommands>();
             Commands.RegisterCommands<GuildCommands>();
+            Commands.RegisterCommands<SwitchRequestCommands>();
 
             Client.ConnectAsync();
         }

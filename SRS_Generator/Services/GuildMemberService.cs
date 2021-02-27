@@ -75,6 +75,35 @@ namespace SRS_Generator.Services
             return;
         }
 
+        public async Task<GuildMemberViewModel> GetUser(DiscordUser discordUser)
+        {
+            await CheckIfUsersExist(new List<DiscordUser> { discordUser });
+
+            var user = await _context.GuildMembers
+                .Include(x => x.Guild)
+                .FirstOrDefaultAsync(x => x.DiscordId == discordUser.Id.ToString())
+                .ConfigureAwait(false);
+
+            var result = user.MapFromEntity();
+
+            return result;
+        }
+
+        public async Task<List<GuildMemberViewModel>> GetUsers(List<DiscordUser> discordUsers)
+        {
+            await CheckIfUsersExist(discordUsers);
+
+            var users = await _context.GuildMembers
+                .Include(x => x.Guild)
+                .Where(x => discordUsers.Any(y => y.Id.ToString() == x.DiscordId))
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var userList = users.Select(x => x.MapFromEntity()).ToList();
+
+            return userList;
+        }
+
         public async Task<List<GuildMemberViewModel>> GetAllUsers()
         {
             var guildMembers = await _context.GuildMembers
@@ -114,12 +143,41 @@ namespace SRS_Generator.Services
 
             return;
         }
+
+        private async Task<bool> CheckIfUsersExist(List<DiscordUser> discordUsers)
+        {
+            bool usersExist = true;
+            var nonExistentUsers = new List<string>();
+
+            foreach (var user in discordUsers)
+            {
+                bool userExist = await _context.GuildMembers
+                    .AnyAsync(x => x.DiscordId == user.Id.ToString())
+                    .ConfigureAwait(false);
+
+                if (!userExist)
+                {
+                    nonExistentUsers.Add(user.Username);
+                    usersExist = false;
+                }
+            }
+
+            if (!usersExist)
+            {
+                var users = string.Join(", ", nonExistentUsers);
+                throw new Exception($"No such user(s): {users}");
+            }
+
+            return usersExist;
+        }
     }
 
     public interface IGuildMemberService
     {
         Task CreateMember(DiscordUser user);
         Task DeleteMember(DiscordUser user);
+        Task<GuildMemberViewModel> GetUser(DiscordUser discordUser);
+        Task<List<GuildMemberViewModel>> GetUsers(List<DiscordUser> discordUsers);
         Task<List<GuildMemberViewModel>> GetAllUsers();
         Task AddAllUsers(List<DiscordMember> users);
     }

@@ -53,6 +53,22 @@ namespace SRS_Generator.Helpers
                 Username = source.Username
             };
         }
+
+        public static SwitchRequestViewModel MapFromEntity(this SwitchRequest source)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            return new SwitchRequestViewModel
+            {
+                RequestedBy = source.RequestedBy.MapFromEntity(),
+                SourceGuild = source.SourceGuild.MapFromEntity(false),
+                TargetGuild = source.TargetGuild.MapFromEntity(false),
+                IsApproved = source.IsApproved
+            };
+        }
         #endregion
 
         #region MapToEntity
@@ -101,10 +117,10 @@ namespace SRS_Generator.Helpers
 
             return new SwitchRequest
             {
-                //Id = new Guid(),
-                //DateCreated = DateTime.UtcNow,
-                //DateUpdated = DateTime.UtcNow,
-                IsApproved = source.IsApproved
+                IsApproved = source.IsApproved,
+                SourceGuild = source.SourceGuild.MapToEntity(),
+                TargetGuild = source.TargetGuild.MapToEntity(),
+                RequestedBy = source.RequestedBy.MapToEntity(),
             };
         }
         #endregion

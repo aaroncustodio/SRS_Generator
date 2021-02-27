@@ -79,11 +79,35 @@ namespace SRS_Generator.Services
 
             return $"\n{list}";
         }
+
+        public string BuildSwitchRequestList(ICollection<SwitchRequestViewModel> switchRequests)
+        {
+            string list = "\n";
+            int ctr = 1;
+
+            if (switchRequests.Count == 0)
+            {
+                return "\n\nNothing to display.";
+            }
+
+            foreach (var switchRequest in switchRequests)
+            {
+                list += $"\n#{ctr.ToString().ToBold()}:" +
+                    $"\n{switchRequest.RequestedBy.FullUsername()}" +
+                    $"\nFrom: {switchRequest.SourceGuild.Name}" +
+                    $"\nTo: {switchRequest.TargetGuild.Name}" +
+                    $"\n";
+                ctr++;
+            }
+
+            return $"\n{list}";
+        }
     }
 
     public interface IEmbedContentBuilder
     {
         string BuildGuildList(ICollection<GuildViewModel> guilds);
         string BuildMemberList(ICollection<GuildMemberViewModel> members);
+        string BuildSwitchRequestList(ICollection<SwitchRequestViewModel> switchRequests);
     }
 }

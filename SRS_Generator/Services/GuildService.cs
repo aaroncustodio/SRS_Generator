@@ -47,6 +47,21 @@ namespace SRS_Generator.Services
             return guild;
         }
 
+        public async Task<List<GuildViewModel>> GetGuilds(List<string> guildNames)
+        {
+            await CheckIfGuildsExist(guildNames);
+
+            var guilds = await _context.Guilds
+                .Include(x => x.Members)
+                .Where(x => guildNames.Any(y => y.ToLower() == x.Name.ToLower()))
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var guildList = guilds.Select(x => x.MapFromEntity()).ToList();
+
+            return guildList;
+        }
+
         public async Task<List<GuildViewModel>> GetAllGuilds()
         {
             var guilds = await _context.Guilds
@@ -62,14 +77,6 @@ namespace SRS_Generator.Services
             var guildList = guilds.Select(x => x.MapFromEntity()).ToList();
 
             return guildList;
-        }
-
-        public async Task<string> GetGuildInfo(string name)
-        {
-            var guild = await GetGuild(name);
-
-            string result = "";
-            return result;
         }
 
         public async Task<List<string>> AddMembersToGuild(string guildName, List<string> userIds)
@@ -110,14 +117,7 @@ namespace SRS_Generator.Services
 
         public async Task<List<string>> RemoveMembersFromGuild(string guildName, List<string> userIds)
         {
-            bool guildExists = await _context.Guilds
-                .AnyAsync(x => x.Name.ToLower() == guildName.ToLower())
-                .ConfigureAwait(false);
-
-            if (!guildExists)
-            {
-                throw new Exception("Guild does not exist.");
-            }
+            await CheckIfGuildsExist(new List<string> { guildName });
 
             var guild = await _context.Guilds
                 .Include(x => x.Members)
@@ -151,6 +151,33 @@ namespace SRS_Generator.Services
 
             return removedUsers;
         }
+
+        private async Task<bool> CheckIfGuildsExist(List<string> names)
+        {
+            bool guildsExist = true;
+            var nonExistentGuilds = new List<string>();
+            
+            foreach (var name in names)
+            {
+                bool guildExist = await _context.Guilds
+                    .AnyAsync(x => x.Name.ToLower() == name.ToLower())
+                    .ConfigureAwait(false);
+
+                if (!guildExist)
+                {
+                    nonExistentGuilds.Add(name);
+                    guildsExist = false;
+                }
+            }
+
+            if (!guildsExist)
+            {
+                var guilds = string.Join(", ", nonExistentGuilds);
+                throw new Exception($"No such guild(s): {guilds}");
+            }
+
+            return guildsExist;
+        }
     }
 
     public interface IGuildService
@@ -158,7 +185,7 @@ namespace SRS_Generator.Services
         Task CreateGuild(GuildViewModel guild);
         Task<List<GuildViewModel>> GetAllGuilds();
         Task<GuildViewModel> GetGuild(string name);
-        Task<string> GetGuildInfo(string name);
+        Task<List<GuildViewModel>> GetGuilds(List<string> guildNames);
         Task<List<string>> AddMembersToGuild(string guildName, List<string> userIds);
         Task<List<string>> RemoveMembersFromGuild(string guildName, List<string> userIds);
     }
