@@ -152,11 +152,11 @@ namespace SRS_Generator.Services
             return removedUsers;
         }
 
-        private async Task<bool> CheckIfGuildsExist(List<string> names)
+        public async Task<bool> CheckIfGuildsExist(List<string> names)
         {
             bool guildsExist = true;
             var nonExistentGuilds = new List<string>();
-            
+
             foreach (var name in names)
             {
                 bool guildExist = await _context.Guilds
@@ -182,11 +182,12 @@ namespace SRS_Generator.Services
 
     public interface IGuildService
     {
+        Task<List<string>> AddMembersToGuild(string guildName, List<string> userIds);
+        Task<bool> CheckIfGuildsExist(List<string> names);
         Task CreateGuild(GuildViewModel guild);
         Task<List<GuildViewModel>> GetAllGuilds();
         Task<GuildViewModel> GetGuild(string name);
         Task<List<GuildViewModel>> GetGuilds(List<string> guildNames);
-        Task<List<string>> AddMembersToGuild(string guildName, List<string> userIds);
         Task<List<string>> RemoveMembersFromGuild(string guildName, List<string> userIds);
     }
 }

@@ -144,7 +144,7 @@ namespace SRS_Generator.Services
             return;
         }
 
-        private async Task<bool> CheckIfUsersExist(List<DiscordUser> discordUsers)
+        public async Task<bool> CheckIfUsersExist(List<DiscordUser> discordUsers)
         {
             bool usersExist = true;
             var nonExistentUsers = new List<string>();
@@ -174,11 +174,12 @@ namespace SRS_Generator.Services
 
     public interface IGuildMemberService
     {
+        Task AddAllUsers(List<DiscordMember> users);
+        Task<bool> CheckIfUsersExist(List<DiscordUser> discordUsers);
         Task CreateMember(DiscordUser user);
         Task DeleteMember(DiscordUser user);
+        Task<List<GuildMemberViewModel>> GetAllUsers();
         Task<GuildMemberViewModel> GetUser(DiscordUser discordUser);
         Task<List<GuildMemberViewModel>> GetUsers(List<DiscordUser> discordUsers);
-        Task<List<GuildMemberViewModel>> GetAllUsers();
-        Task AddAllUsers(List<DiscordMember> users);
     }
 }

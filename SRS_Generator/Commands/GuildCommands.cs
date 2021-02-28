@@ -48,7 +48,7 @@ namespace SRS_Generator.Commands
 
                 await _guildService.CreateGuild(guild);
 
-                await ctx.Channel.SendMessageAsync("Guild added").ConfigureAwait(false);
+                await ctx.Channel.SendMessageAsync("Guild created.").ConfigureAwait(false);
             }
             catch (Exception ex)
             {

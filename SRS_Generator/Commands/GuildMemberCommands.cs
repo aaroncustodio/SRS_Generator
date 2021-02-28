@@ -44,7 +44,7 @@ namespace SRS_Generator.Commands
 
                 await _guildMemberService.CreateMember(user).ConfigureAwait(false);
 
-                var responseMessage = $"Member created: {user.Username}";
+                var responseMessage = $"Member created: {user.Username}.";
                 await ctx.Channel.SendMessageAsync(responseMessage).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -66,7 +66,7 @@ namespace SRS_Generator.Commands
 
                 await _guildMemberService.DeleteMember(user).ConfigureAwait(false);
 
-                var responseMessage = $"Member deleted: {user.Username}";
+                var responseMessage = $"Member deleted: {user.Username}.";
                 await ctx.Channel.SendMessageAsync(responseMessage).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -88,7 +88,7 @@ namespace SRS_Generator.Commands
 
                 await _guildMemberService.AddAllUsers(userList).ConfigureAwait(false);
 
-                var responseMessage = $"Members added successfully";
+                var responseMessage = $"Members added successfully.";
                 await ctx.Channel.SendMessageAsync(responseMessage).ConfigureAwait(false);
             }
             catch (Exception ex)
