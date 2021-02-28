@@ -92,10 +92,12 @@ namespace SRS_Generator.Services
 
             foreach (var switchRequest in switchRequests)
             {
-                list += $"\n#{ctr.ToString().ToBold()}:" +
+                var sourceGuild = switchRequest.SourceGuild != null ? switchRequest.SourceGuild.Name : "None";
+                list += /*$"\n#{ctr.ToString().ToBold()}:" +*/
                     $"\n{switchRequest.RequestedBy.FullUsername()}" +
-                    $"\nFrom: {switchRequest.SourceGuild.Name}" +
+                    $"\nFrom: {sourceGuild}" +
                     $"\nTo: {switchRequest.TargetGuild.Name}" +
+                    $"\nStatus: {switchRequest.Status}" +
                     $"\n";
                 ctr++;
             }

@@ -42,8 +42,9 @@ namespace SRS_Generator.Commands
         {
             try
             {
-                var guildNames = new List<string> { source, target };
-
+                var guildNames = new List<string> { target };
+                if (source != "--") guildNames.Add(source);
+                
                 DiscordUser requestor = null;
                 var mentions = ctx.Message.MentionedUsers;
                 if (mentions.Count > 0)
@@ -55,19 +56,16 @@ namespace SRS_Generator.Commands
                     requestor = ctx.Message.Author;
                 }
 
-                var requestedBy = await _guildMemberService.GetUser(requestor);
-                var guildList = await _guildService.GetGuilds(guildNames);
-                var sourceGuild = guildList.FirstOrDefault(x => x.Name.ToLower() == source.ToLower());
-                var targetGuild = guildList.FirstOrDefault(x => x.Name.ToLower() == target.ToLower());
+                await _guildMemberService.CheckIfUsersExist(new List<DiscordUser> { requestor });
+                await _guildService.CheckIfGuildsExist(guildNames);
 
-                var newSwitchRequest = new SwitchRequestViewModel
+                var sourceAndTarget = new Dictionary<string, string>
                 {
-                    SourceGuild = sourceGuild,
-                    TargetGuild = targetGuild,
-                    RequestedBy = requestedBy
+                    { "source", source },
+                    { "target", target }
                 };
 
-                var switchRequest = await _switchRequestService.CreateSwitchRequest(newSwitchRequest);
+                var switchRequest = await _switchRequestService.CreateSwitchRequest(sourceAndTarget, requestor);
 
                 await ctx.Channel.SendMessageAsync("Switch request created.").ConfigureAwait(false);
             }

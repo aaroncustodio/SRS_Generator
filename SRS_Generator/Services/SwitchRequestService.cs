@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DSharpPlus.Entities;
+using Microsoft.EntityFrameworkCore;
 using SRS_Generator.Data;
 using SRS_Generator.Helpers;
+using SRS_Generator.Models;
 using SRS_Generator.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -19,9 +21,24 @@ namespace SRS_Generator.Services
             _context = context;
         }
 
-        public async Task<SwitchRequestViewModel> CreateSwitchRequest(SwitchRequestViewModel switchRequest)
+        public async Task<SwitchRequestViewModel> CreateSwitchRequest(Dictionary<string, string> sourceAndTarget, DiscordUser requestor)
         {
-            var newSwitchRequest = switchRequest.MapToEntity();
+            var requestedBy = await _context.GuildMembers
+                .FirstOrDefaultAsync(x => x.DiscordId == requestor.Id.ToString())
+                .ConfigureAwait(false);
+            var sourceGuild = await _context.Guilds
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == sourceAndTarget["source"].ToLower())
+                .ConfigureAwait(false);
+            var targetGuild = await _context.Guilds
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == sourceAndTarget["target"].ToLower())
+                .ConfigureAwait(false);
+
+            var newSwitchRequest = new SwitchRequest()
+            {
+                RequestedBy = requestedBy,
+                SourceGuild = sourceGuild,
+                TargetGuild = targetGuild
+            };
 
             _context.SwitchRequests.Add(newSwitchRequest);
             await _context.SaveChangesAsync().ConfigureAwait(false);
@@ -35,7 +52,7 @@ namespace SRS_Generator.Services
                 .Include(x => x.RequestedBy)
                 .Include(x => x.SourceGuild)
                 .Include(x => x.TargetGuild)
-                .Where(x => !x.IsApproved)
+                .Where(x => x.Status == SwitchRequestStatus.Active)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
@@ -53,6 +70,6 @@ namespace SRS_Generator.Services
     public interface ISwitchRequestService
     {
         Task<List<SwitchRequestViewModel>> GetAllSwitchRequests();
-        Task<SwitchRequestViewModel> CreateSwitchRequest(SwitchRequestViewModel switchRequest);
+        Task<SwitchRequestViewModel> CreateSwitchRequest(Dictionary<string, string> sourceAndTarget, DiscordUser requestor);
     }
 }
