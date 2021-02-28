@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20210217130533_add switch request.cs" />
     <Compile Remove="Migrations\20210217130533_add switch request.Designer.cs" />
+    <Compile Remove="Migrations\20210228031424_add switch request status enum.cs" />
+    <Compile Remove="Migrations\20210228031424_add switch request status enum.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

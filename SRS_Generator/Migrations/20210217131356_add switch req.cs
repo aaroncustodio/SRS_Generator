@@ -28,7 +28,6 @@ namespace SRS_Generator.Migrations
                     RequestedByDiscordId = table.Column<string>(nullable: true),
                     SourceGuildId = table.Column<Guid>(nullable: true),
                     TargetGuildId = table.Column<Guid>(nullable: true),
-                    IsApproved = table.Column<bool>(nullable: false),
                     ApprovedBy = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
