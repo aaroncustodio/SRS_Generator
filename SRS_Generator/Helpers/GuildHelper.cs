@@ -64,9 +64,10 @@ namespace SRS_Generator.Helpers
             return new SwitchRequestViewModel
             {
                 RequestedBy = source.RequestedBy.MapFromEntity(),
-                SourceGuild = source.SourceGuild.MapFromEntity(false),
+                SourceGuild = source.SourceGuild != null ? source.SourceGuild.MapFromEntity(false) : null,
                 TargetGuild = source.TargetGuild.MapFromEntity(false),
-                IsApproved = source.IsApproved
+                Status = source.Status.GetDescription()
+                //IsApproved = source.IsApproved
             };
         }
         #endregion
@@ -117,7 +118,6 @@ namespace SRS_Generator.Helpers
 
             return new SwitchRequest
             {
-                IsApproved = source.IsApproved,
                 SourceGuild = source.SourceGuild.MapToEntity(),
                 TargetGuild = source.TargetGuild.MapToEntity(),
                 RequestedBy = source.RequestedBy.MapToEntity(),
