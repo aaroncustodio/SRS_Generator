@@ -62,7 +62,7 @@ namespace SRS_Generator
             services.AddDbContext<GuildContext>(options =>
             {
                 var connectionString = configuration["ConnectionString"];
-                options.UseSqlite(connectionString);
+                options.UseSqlServer(connectionString);
             });
 
             return services;
