@@ -41,10 +41,8 @@ namespace SRS_Generator.Commands
         public async Task CreateSwitchRequest(CommandContext ctx, string source, string target, [RemainingText] string mentionedUser = null)
         {
             try
-            {
-                var guildNames = new List<string> { target };
-                if (source != "--") guildNames.Add(source);
-                
+            {    
+                //Get the appropriate requestor, this can either be the author or the mentioned user (if any)
                 DiscordUser requestor = null;
                 var mentions = ctx.Message.MentionedUsers;
                 if (mentions.Count > 0)
@@ -56,8 +54,16 @@ namespace SRS_Generator.Commands
                     requestor = ctx.Message.Author;
                 }
 
+                //Get source and target guild names for null checking
+                var guildNames = new List<string> { target };
+                if (source != "--") guildNames.Add(source);
+
+                //Check if the guilds/users exist
                 await _guildMemberService.CheckIfUsersExist(new List<DiscordUser> { requestor });
                 await _guildService.CheckIfGuildsExist(guildNames);
+
+                //Check if the user has an existing switch request
+                var switchRequestExists = await _switchRequestService.CheckIfSwitchRequestExists(requestor);
 
                 var sourceAndTarget = new Dictionary<string, string>
                 {
@@ -65,9 +71,21 @@ namespace SRS_Generator.Commands
                     { "target", target }
                 };
 
-                var switchRequest = await _switchRequestService.CreateSwitchRequest(sourceAndTarget, requestor);
+                string message = "";
+                if (switchRequestExists)
+                {
+                    //Update switch request
+                    await _switchRequestService.UpdateSwitchRequest(sourceAndTarget, requestor.Id.ToString());
+                    message = "Switch request updated.";
+                }
+                else
+                {
+                    //Create switch request
+                    await _switchRequestService.CreateSwitchRequest(sourceAndTarget, requestor);
+                    message = "Switch request created.";
+                }
 
-                await ctx.Channel.SendMessageAsync("Switch request created.").ConfigureAwait(false);
+                await ctx.Channel.SendMessageAsync(message).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

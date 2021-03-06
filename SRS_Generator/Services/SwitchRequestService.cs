@@ -46,6 +46,31 @@ namespace SRS_Generator.Services
             return newSwitchRequest.MapFromEntity();
         }
 
+        public async Task<SwitchRequestViewModel> UpdateSwitchRequest(Dictionary<string, string> sourceAndTarget, string requestorId)
+        {
+            var switchRequests = await _context.SwitchRequests
+                .Include(x => x.RequestedBy)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var switchRequest = switchRequests.FirstOrDefault(x => x.RequestedBy.DiscordId == requestorId);
+
+            var sourceGuild = await _context.Guilds
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == sourceAndTarget["source"].ToLower())
+                .ConfigureAwait(false);
+            var targetGuild = await _context.Guilds
+                .FirstOrDefaultAsync(x => x.Name.ToLower() == sourceAndTarget["target"].ToLower())
+                .ConfigureAwait(false);
+
+            switchRequest.SourceGuild = sourceGuild;
+            switchRequest.TargetGuild = targetGuild;
+
+            _context.SwitchRequests.Update(switchRequest);
+            await _context.SaveChangesAsync().ConfigureAwait(false);
+
+            return switchRequest.MapFromEntity();
+        }
+
         public async Task<List<SwitchRequestViewModel>> GetAllSwitchRequests()
         {
             var switchRequests = await _context.SwitchRequests
@@ -65,11 +90,26 @@ namespace SRS_Generator.Services
 
             return switchRequestList;
         }
+
+        public async Task<bool> CheckIfSwitchRequestExists(DiscordUser discordUser)
+        {
+            var switchRequests = await _context.SwitchRequests
+                .Include(x => x.RequestedBy)
+                .AsNoTracking()
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var switchRequestExists = switchRequests.Any(x => x.RequestedBy.DiscordId == discordUser.Id.ToString());
+
+            return switchRequestExists;
+        }
     }
 
     public interface ISwitchRequestService
     {
-        Task<List<SwitchRequestViewModel>> GetAllSwitchRequests();
+        Task<bool> CheckIfSwitchRequestExists(DiscordUser discordUser);
         Task<SwitchRequestViewModel> CreateSwitchRequest(Dictionary<string, string> sourceAndTarget, DiscordUser requestor);
+        Task<List<SwitchRequestViewModel>> GetAllSwitchRequests();
+        Task<SwitchRequestViewModel> UpdateSwitchRequest(Dictionary<string, string> sourceAndTarget, string requestorId);
     }
 }
