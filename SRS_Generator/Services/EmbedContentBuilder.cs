@@ -95,14 +95,41 @@ namespace SRS_Generator.Services
                 var sourceGuild = switchRequest.SourceGuild != null ? switchRequest.SourceGuild.Name : "None";
                 list += /*$"\n#{ctr.ToString().ToBold()}:" +*/
                     $"\n{switchRequest.RequestedBy.FullUsername()}" +
-                    $"\nFrom: {sourceGuild}" +
-                    $"\nTo: {switchRequest.TargetGuild.Name}" +
-                    $"\nStatus: {switchRequest.Status}" +
+                    $"\n{sourceGuild} → {switchRequest.TargetGuild.Name}" +
+                    //$"\n**From**: {sourceGuild}" +
+                    //$"\n**To**: {switchRequest.TargetGuild.Name}" +
+                    //$"\n**Status**: {switchRequest.Status}" +
                     $"\n";
                 ctr++;
             }
 
             return $"\n{list}";
+        }
+
+        public string BuildSwitchRequestSummary(ICollection<GuildViewModel> guilds, ICollection<SwitchRequestViewModel> switchRequests)
+        {
+            string summary = "\n";
+
+            foreach (var guild in guilds)
+            {
+                var requestsByTarget = switchRequests.Where(x => x.TargetGuild.Name == guild.Name);
+                var incomingUserList = requestsByTarget.Select(x => x.RequestedBy.Username).ToList();
+                var incomingUsers = string.Join(", ", incomingUserList);
+
+                var requestsBySource = switchRequests.Where(x => x.SourceGuild.Name == guild.Name);
+                var outgoingUserList = requestsBySource.Select(x => x.RequestedBy.Username).ToList();
+                var outgoingUsers = string.Join(", ", outgoingUserList);
+
+                var openSpots = $"\n{guild.OpenSpots + incomingUserList.Count - outgoingUserList.Count} open spot(s)";
+                summary +=
+                    $"\n**{guild.Name} Summary**" +
+                    $"\n**In**: {incomingUsers}" +
+                    $"\n**Out**: {outgoingUsers}" +
+                    openSpots +
+                    $"\n";
+            }
+
+            return summary;
         }
     }
 
@@ -111,5 +138,6 @@ namespace SRS_Generator.Services
         string BuildGuildList(ICollection<GuildViewModel> guilds);
         string BuildMemberList(ICollection<GuildMemberViewModel> members);
         string BuildSwitchRequestList(ICollection<SwitchRequestViewModel> switchRequests);
+        string BuildSwitchRequestSummary(ICollection<GuildViewModel> guilds, ICollection<SwitchRequestViewModel> switchRequests);
     }
 }

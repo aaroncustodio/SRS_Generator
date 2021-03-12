@@ -21,6 +21,8 @@ namespace SRS_Generator.Commands
         private const string _CreateSwitchRequestAlias = "csr";
         private const string _ListSwitchRequests = "list-switch-requests";
         private const string _ListSwitchRequestsAlias = "lsr";
+        private const string _GenerateSummary = "generate-summary";
+        private const string _GenerateSummaryAlias = "gs";
 
         public SwitchRequestCommands(
             ISwitchRequestService switchRequestService,
@@ -105,8 +107,34 @@ namespace SRS_Generator.Commands
                 var switchRequestString = _embedContentBuilder.BuildSwitchRequestList(switchRequestList);
 
                 var embed = new DiscordEmbedBuilder();
-                embed.Title = "Switch Requests";
+                embed.Title = "Active Switch Requests";
                 embed.Description = switchRequestString;
+
+                embed.Build();
+
+                await ctx.Channel.SendMessageAsync(embed).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(ex.Message).ConfigureAwait(false);
+            }
+        }
+
+        [Command(_GenerateSummary)]
+        [Aliases(new string[] { _GenerateSummaryAlias })]
+        [Description("")]
+        //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
+        public async Task GenerateSwitchRequestSummary(CommandContext ctx)
+        {
+            try
+            {
+                var guilds = await _guildService.GetAllGuilds().ConfigureAwait(false);
+                var switchRequestList = await _switchRequestService.GetAllSwitchRequests().ConfigureAwait(false);
+                var switchRequestSummary = _embedContentBuilder.BuildSwitchRequestSummary(guilds, switchRequestList);
+
+                var embed = new DiscordEmbedBuilder();
+                embed.Title = "Switch Request Summary";
+                embed.Description = switchRequestSummary;
 
                 embed.Build();
 
