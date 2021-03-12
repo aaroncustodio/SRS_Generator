@@ -120,10 +120,12 @@ namespace SRS_Generator.Services
             var userIds = users.Select(x => x.Id.ToString()).ToList();
             var existingUsers = await _context.GuildMembers
                 .Where(x => userIds.Any(id => id == x.DiscordId))
+                .AsNoTracking()
 				.ToListAsync()
 				.ConfigureAwait(false);
 
             var newUserList = users.Where(x => existingUsers.All(existing => existing.DiscordId != x.Id.ToString())).ToList();
+            var oldUserList = users.Where(x => existingUsers.Any(existing => existing.DiscordId == x.Id.ToString())).ToList();
 
             foreach (var newUser in newUserList)
             {
@@ -131,12 +133,22 @@ namespace SRS_Generator.Services
                 {
                     DiscordId = newUser.Id.ToString(),
                     Username = newUser.Username,
-                    Discriminator = newUser.Discriminator
+                    Discriminator = newUser.Discriminator,
+                    DisplayName = newUser.Nickname
                 };
 
                 var memberEntity = newMember.MapToEntity();
 
                 _context.GuildMembers.Add(memberEntity);
+            }
+
+            foreach (var oldUser in oldUserList)
+            {
+                var user = _context.GuildMembers.FirstOrDefault(x => x.DiscordId == oldUser.Id.ToString());
+                user.Discriminator = oldUser.Discriminator;
+                user.Username = oldUser.Username;
+                user.DisplayName = oldUser.DisplayName;
+                _context.GuildMembers.Update(user);
             }
 
             await _context.SaveChangesAsync().ConfigureAwait(false);
