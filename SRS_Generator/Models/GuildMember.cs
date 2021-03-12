@@ -7,6 +7,7 @@ namespace SRS_Generator.Models
         public string DiscordId { get; set; }
         public string Username { get; set; }
         public string Discriminator { get; set; }
+        public string DisplayName { get; set; }
         public Guild Guild { get; set; }
         public ICollection<SwitchRequest> SwitchRequests { get; set; }
         public bool IsGuildMaster { get; set; }

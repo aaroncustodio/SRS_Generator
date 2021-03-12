@@ -59,7 +59,7 @@ namespace SRS_Generator.Commands
                 //Get source and target guild names for null checking
                 var guildNames = new List<string> { target };
                 if (source != "--") guildNames.Add(source);
-
+                
                 //Check if the guilds/users exist
                 await _guildMemberService.CheckIfUsersExist(new List<DiscordUser> { requestor });
                 await _guildService.CheckIfGuildsExist(guildNames);

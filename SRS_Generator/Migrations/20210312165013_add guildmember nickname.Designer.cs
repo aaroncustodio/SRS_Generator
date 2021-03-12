@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SRS_Generator.Data;
 
 namespace SRS_Generator.Migrations
 {
     [DbContext(typeof(GuildContext))]
-    partial class GuildContextModelSnapshot : ModelSnapshot
+    [Migration("20210312165013_add guildmember nickname")]
+    partial class addguildmembernickname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,11 +48,11 @@ namespace SRS_Generator.Migrations
 
                     b.Property<string>("Discriminator");
 
-                    b.Property<string>("DisplayName");
-
                     b.Property<Guid?>("GuildId");
 
                     b.Property<bool>("IsGuildMaster");
+
+                    b.Property<string>("Nickname");
 
                     b.Property<string>("Username");
 

@@ -1,9 +1,6 @@
 ﻿using SRS_Generator.Models;
 using SRS_Generator.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SRS_Generator.Helpers
 {
@@ -50,7 +47,8 @@ namespace SRS_Generator.Helpers
                 DiscordId = source.DiscordId,
                 Discriminator = source.Discriminator,
                 Guild = source.Guild.MapFromEntity(false),
-                Username = source.Username
+                Username = source.Username,
+                DisplayName = source.DisplayName
             };
         }
 
@@ -64,7 +62,7 @@ namespace SRS_Generator.Helpers
             return new SwitchRequestViewModel
             {
                 RequestedBy = source.RequestedBy.MapFromEntity(),
-                SourceGuild = source.SourceGuild != null ? source.SourceGuild.MapFromEntity(false) : null,
+                SourceGuild = source.SourceGuild?.MapFromEntity(false),
                 TargetGuild = source.TargetGuild.MapFromEntity(false),
                 Status = source.Status.GetDescription()
                 //IsApproved = source.IsApproved
@@ -104,6 +102,7 @@ namespace SRS_Generator.Helpers
                 DiscordId = source.DiscordId,
                 Discriminator = source.Discriminator,
                 Username = source.Username,
+                DisplayName = source.DisplayName,
                 //Guild = source.Guild?.MapToEntity(),
                 IsGuildMaster = source.IsGuildMaster
             };
