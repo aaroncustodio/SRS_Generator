@@ -67,11 +67,13 @@ namespace SRS_Generator.Services
             {
                 if (member.Guild != null)
                 {
-                    list += $"\n#{ctr.ToString().ToBold()} - ({member.Guild.Name.ToBold()}) {member.FullUsername()}";
+                    //list += $"\n#{ctr.ToString().ToBold()} - ({member.Guild.Name.ToBold()}) {member.FullUsername()}";
+                    list += $"\n#{ctr.ToString().ToBold()} - ({member.Guild.Name.ToBold()}) {member.DisplayName}";
                 }
                 else
                 {
-                    list += $"\n#{ctr.ToString().ToBold()} - {member.FullUsername()}";
+                    //list += $"\n#{ctr.ToString().ToBold()} - {member.FullUsername()}";
+                    list += $"\n#{ctr.ToString().ToBold()} - {member.DisplayName}";
                 }
 
                 ctr++;
@@ -93,8 +95,11 @@ namespace SRS_Generator.Services
             foreach (var switchRequest in switchRequests)
             {
                 var sourceGuild = switchRequest.SourceGuild != null ? switchRequest.SourceGuild.Name : "None";
+                var requestedBy = switchRequest.RequestedBy;
+
                 list += /*$"\n#{ctr.ToString().ToBold()}:" +*/
-                    $"\n{switchRequest.RequestedBy.FullUsername()}" +
+                    //$"\n{requestedBy.DisplayName} ({requestedBy.FullUsername()})" +
+                    $"\n{requestedBy.DisplayName}" +
                     $"\n{sourceGuild} → {switchRequest.TargetGuild.Name}" +
                     //$"\n**From**: {sourceGuild}" +
                     //$"\n**To**: {switchRequest.TargetGuild.Name}" +
@@ -112,19 +117,33 @@ namespace SRS_Generator.Services
 
             foreach (var guild in guilds)
             {
-                var requestsByTarget = switchRequests.Where(x => x.TargetGuild.Name == guild.Name);
-                var incomingUserList = requestsByTarget.Select(x => x.RequestedBy.Username).ToList();
+                var requestsByTarget = switchRequests.Where(x => x.TargetGuild.Name == guild.Name).ToList();
+                var incomingUserList = requestsByTarget.Select(x => x.RequestedBy.DisplayName).ToList();
                 var incomingUsers = string.Join(", ", incomingUserList);
 
-                var requestsBySource = switchRequests.Where(x => x.SourceGuild.Name == guild.Name);
-                var outgoingUserList = requestsBySource.Select(x => x.RequestedBy.Username).ToList();
+                var requestsBySource = switchRequests.Where(x => x.SourceGuild?.Name == guild.Name).ToList();
+                var outgoingUserList = requestsBySource.Select(x => x.RequestedBy.DisplayName).ToList();
                 var outgoingUsers = string.Join(", ", outgoingUserList);
 
-                var openSpots = $"\n{guild.OpenSpots + incomingUserList.Count - outgoingUserList.Count} open spot(s)";
+                var openSpotCount = guild.OpenSpots - incomingUserList.Count + outgoingUserList.Count;
+                var openSpots = "";
+                if (openSpotCount < 0)
+                {
+                    openSpots = $"\nFull ({Math.Abs(openSpotCount)} open spot(s) needed)";
+                }
+                else if (openSpotCount > 0)
+                {
+                    openSpots = $"\n{openSpotCount} open spot(s)";
+                }
+                else
+                {
+                    openSpots = $"\nFull";
+                }
+                
                 summary +=
                     $"\n**{guild.Name} Summary**" +
-                    $"\n**In**: {incomingUsers}" +
-                    $"\n**Out**: {outgoingUsers}" +
+                    $"\nIn: {incomingUsers}" +
+                    $"\nOut: {outgoingUsers}" +
                     openSpots +
                     $"\n";
             }
