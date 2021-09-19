@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using SRS_Generator.Helpers;
 using SRS_Generator.Services;
 using SRS_Generator.ViewModels;
 using System;
@@ -37,22 +38,28 @@ namespace SRS_Generator.Commands
         [Aliases(new string[] { _CreateGuildAlias })]
         [Description("")]
         //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
-        public async Task CreateGuild(CommandContext ctx, string name, bool isActive, bool isFarming)
+        public async Task CreateGuild(CommandContext ctx, string name, [RemainingText] string args)
         {
             try
             {
                 var guild = new GuildViewModel();
                 guild.Name = name;
-                guild.IsActive = isActive;
-                guild.IsFarmingGuild = isFarming;
+
+                if (!string.IsNullOrEmpty(args))
+                {
+                    var arguments = args.Split(" ");
+                    guild.IsActive = bool.Parse(arguments[0]);
+                    guild.IsFarmingGuild = bool.Parse(arguments[1]);
+                }
 
                 await _guildService.CreateGuild(guild);
 
-                await ctx.Channel.SendMessageAsync("Guild created.").ConfigureAwait(false);
+                await ctx.Message.CreateReactionAsync(EmojiHelper.WhiteCheckMark(ctx.Client)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 string message = $"Create guild failed. Error message: {ex.Message}";
+                await ctx.Message.CreateReactionAsync(EmojiHelper.X(ctx.Client)).ConfigureAwait(false);
                 await ctx.Channel.SendMessageAsync(message).ConfigureAwait(false);
             }
         }
@@ -156,6 +163,33 @@ namespace SRS_Generator.Commands
 
                 string response = $"Removed {removedUsers} from {guildName.ToUpper()}";
                 await ctx.Channel.SendMessageAsync(response).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(ex.Message).ConfigureAwait(false);
+            }
+        }
+
+        [Command("reset")]
+        [Description("")]
+        //[RequireRoles(RoleCheckMode.Any, "ADMIN")]
+        public async Task ShowResetTimer(CommandContext ctx)
+        {
+            try
+            {
+                var today = DateTime.UtcNow;
+                var reset = new DateTime(637527996000000000); // 31 Mar 2021 15:00 UTC
+                var guildSpan = new TimeSpan(5, 0, 0, 0);
+                var colonySpan = new TimeSpan(10, 0, 0, 0);
+                var tickDiff = (today - reset).Ticks;
+                var tickDiff2 = tickDiff % guildSpan.Ticks;
+                var timeToReset = new DateTime(guildSpan.Ticks - tickDiff2);
+                var resetDate = today.AddDays(timeToReset.Day).AddHours(timeToReset.Hour).AddMinutes(timeToReset.Minute);
+
+                string response = $"{timeToReset.Day - 1} Days, {timeToReset.Hour} Hours, {timeToReset.Minute} Minutes";
+                string response2 = $"{resetDate}";
+                await ctx.Channel.SendMessageAsync(response).ConfigureAwait(false);
+                await ctx.Channel.SendMessageAsync(response2).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

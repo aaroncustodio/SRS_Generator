@@ -9,8 +9,8 @@ namespace SRS_Generator.ViewModels
     {
         public string Name { get; set; }
         public ICollection<GuildMemberViewModel> Members { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsFarmingGuild { get; set; }
+        public bool IsActive { get; set; } = true;
+        public bool IsFarmingGuild { get; set; } = false;
         public int MemberCount { get; set; }
         public int OpenSpots { get; set; }
 
